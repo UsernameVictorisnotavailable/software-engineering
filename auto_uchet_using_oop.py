@@ -142,7 +142,27 @@ class Auto_uchet:
                             break
             print('Машин с указанным параметром:', count)
         return count
-    
+
+    def delete_car(self):
+        print('Укажите номер машины, которую хотите удалить')
+        self.show_car()
+        enter = self.input_range(1,self.count_cars())
+
+        #удаляем машину
+        for i in range(len(self.dano)):
+            if self.dano[i].split('. ')[0] == str(enter):
+                self.dano.pop(i)
+
+                #правим номера
+                for j in range(i,len(self.dano)):
+                    if self.dano[j][0].isdigit():
+                        self.dano[j] = str(int(self.dano[j].split('. ')[0])-1)+'. '+self.dano[j].split('. ')[1]
+                    break
+        file = open(self.file_name, 'w', encoding = 'utf-8')
+        file.writelines(self.dano)
+        file.close()
+
+        
 a = Auto_uchet()
 if __name__ == '__main__':
     while True:
