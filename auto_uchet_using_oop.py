@@ -1,7 +1,7 @@
 class Auto_uchet:
     def __init__(self, file_name = 'text3.txt'):
         self.file_name = file_name
-        file = open(self.file_name, encoding = 'utf-16')
+        file = open(self.file_name, encoding = 'utf-8')
         self.dano = file.readlines()
         file.close()
         car_body = ['Тип кузова', 'Седан', 'Кроссовер', 'Купе', 'Лимузин', 'Пикап', 'Внедорожник']
@@ -39,7 +39,7 @@ class Auto_uchet:
                     self.dano.append(e)
             return self.dano
         else:
-            file = open(self.file_name, 'a', encoding = 'utf-16')
+            file = open(self.file_name, 'a', encoding = 'utf-8')
             print('Добавление машины в базу')
             for i in self.parameters:
                 if type(i) is list:
@@ -106,7 +106,7 @@ class Auto_uchet:
             else:
                 new_value = input().lower() if self.parameters[enter] == 'Цвет' else input()
             self.dano[enter+self.car_number] = chosen_par + ': ' + new_value + '\n'
-            file = open(self.file_name, 'w', encoding = 'utf-16')
+            file = open(self.file_name, 'w', encoding = 'utf-8')
             file.writelines(self.dano)
             file.close()
             print('Параметр успешно изменён')
@@ -164,6 +164,63 @@ class Auto_uchet:
         file.writelines(self.dano)
         file.close()
 
+    def add_par(self):
+        print('Введите новый праметр')
+        while True:
+            enter = input()
+            if enter == '' or enter.count(' ') == len(enter):
+                print('Параметр не может быть пустой строкой')
+            else:
+                for i in self.parameters:
+                    if (type(i) is list and i[0] == enter) or (type(i) is str and i == enter):
+                        print('Введенный параметр уже существует')
+                        break
+                else:
+                    self.parameters.append(enter)
+                    break
+        #обновляем файл
+        new_dano = []
+        for i in range(len(self.dano)):
+            if type(self.parameters[-2]) is list:
+                if self.dano[i].split(':')[0] == self.parameters[-2][0]:
+                    new_dano.append(self.dano[i])
+                    new_dano.append((self.parameters[-1]+': '+'\n'))
+                else:
+                    new_dano.append(self.dano[i])
+            else:
+                if self.dano[i].split(':')[0] == self.parameters[-2]:
+                    new_dano.append(self.dano[i])
+                    new_dano.append((self.parameters[-1]+': '+'\n'))
+                else:
+                    new_dano.append(self.dano[i])
+        self.dano = new_dano
+        file = open(self.file_name, 'w', encoding='utf-8')
+        file.writelines(self.dano)
+        file.close()
+        print(f'Добавлен новый параметр {enter}')
+        print(self.parameters)
+
+    def delete_par(self):
+        print('Введите номер параметра который вы хотите удалить')
+        for i in range(len(self.parameters)):
+            print(f'{str(i+1)}. {self.parameters[i]}') if type(self.parameters[i]) is str else print(f'{str(i+1)}. {self.parameters[i][0]}')
+        enter = self.input_range(1,len(self.parameters))
+        print('Парамтетр удален')
+
+        #удаление из всего документа
+        i = 0
+        while i != len(self.dano):
+            if self.dano[i].split(':')[0] == self.parameters[enter-1]:
+                self.dano.pop(i)
+            else:
+                i += 1
+
+        #удаляем из списка параметров
+        self.parameters.pop(enter-1)
+        file = open(self.file_name, 'w', encoding='utf-8')
+        file.writelines(self.dano)
+        file.close()
+
 
 
 
@@ -171,8 +228,8 @@ a = Auto_uchet()
 if __name__ == '__main__':
     while True:
         print('Что вы хотите сделать?')
-        print('1. Найти машину\n2. Добавить машину\n3. Изменить параметр машины\n4. Вывести список автомобилей\n5. Вывести параметры конкретной машины\n6. Удалить авто по номеру')
-        choice = a.input_range(1,6)
+        print('1. Найти машину\n2. Добавить машину\n3. Изменить параметр машины\n4. Вывести список автомобилей\n5. Вывести параметры конкретной машины\n6. Удалить авто по номеру\n7. Добавить новый параметр\n8.Удалить параметр')
+        choice = a.input_range(1,11)
         if choice == 1:
             a.find_car()
         elif choice == 2:
@@ -185,3 +242,7 @@ if __name__ == '__main__':
             a.car_params()
         elif choice == 6:
             a.delete_car()
+        elif choice == 7:
+            a.add_par()
+        elif choice == 8:
+            a.delete_par()
