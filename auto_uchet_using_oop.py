@@ -152,22 +152,26 @@ class Auto_uchet:
         for i in range(len(self.dano)):
             if self.dano[i].split('. ')[0] == str(enter):
                 self.dano.pop(i)
+                while i<len(self.dano) and not self.dano[i][0].isdigit():
+                    self.dano.pop(i)
 
                 #правим номера
                 for j in range(i,len(self.dano)):
                     if self.dano[j][0].isdigit():
                         self.dano[j] = str(int(self.dano[j].split('. ')[0])-1)+'. '+self.dano[j].split('. ')[1]
-                    break
+                break
         file = open(self.file_name, 'w', encoding = 'utf-8')
         file.writelines(self.dano)
         file.close()
 
-        
+
+
+
 a = Auto_uchet()
 if __name__ == '__main__':
     while True:
         print('Что вы хотите сделать?')
-        print('1. Найти машину\n2. Добавить машину\n3. Изменить параметр машины\n4. Вывести список автомобилей\n5. Вывести параметры конкретной машины')
+        print('1. Найти машину\n2. Добавить машину\n3. Изменить параметр машины\n4. Вывести список автомобилей\n5. Вывести параметры конкретной машины\n6. Удалить авто по номеру')
         choice = a.input_range(1,6)
         if choice == 1:
             a.find_car()
@@ -179,3 +183,5 @@ if __name__ == '__main__':
             a.show_car()
         elif choice == 5:
             a.car_params()
+        elif choice == 6:
+            a.delete_car()
